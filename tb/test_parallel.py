@@ -33,7 +33,7 @@ if __name__ == "__main__":
         "module": "test_i2c",
     }
 
-    #Run once so all it is compiled once (TO be fixed in cocotb-test)   ONLY NEEDED 1st time
+    # Run once so all is compiled once (TO be fixed in cocotb-test) ONLY NEEDED 1st time
     try:
         sim_mp(sim_args, 1, "test_tree_non_existing") 
     except:
