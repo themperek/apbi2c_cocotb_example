@@ -17,24 +17,22 @@ def sim_mp(sim_args, seed, test_name):
     
     return coverege_results_file_name, test_results
 
-pool = Pool()
-
-dut_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "apbi2c","rtl")
-sim_args = {
-    "verilog_sources": [
-     os.path.join(dut_dir, "apb.v"),
-     os.path.join(dut_dir, "fifo.v"),
-     os.path.join(dut_dir, "i2c.v"),
-     os.path.join(dut_dir, "module_i2c.v"),
-     ],
-    "toplevel": "i2c",
-    "module": "test_i2c",
-    
-}
-
 
 if __name__ == "__main__":
-    
+    pool = Pool()
+
+    dut_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "apbi2c","rtl")
+    sim_args = {
+        "verilog_sources": [
+         os.path.join(dut_dir, "apb.v"),
+         os.path.join(dut_dir, "fifo.v"),
+         os.path.join(dut_dir, "i2c.v"),
+         os.path.join(dut_dir, "module_i2c.v"),
+         ],
+        "toplevel": "i2c",
+        "module": "test_i2c",
+    }
+
     #Run once so all it is compiled once (TO be fixed in cocotb-test)   ONLY NEEDED 1st time
     try:
         sim_mp(sim_args, 1, "test_tree_non_existing") 
