@@ -365,5 +365,5 @@ def test_tree(dut):
             
     log.info("Functional coverage details:")
     coverage_db.report_coverage(log.info, bins=False)
-    coverage_db.export_to_xml("results_coverage.xml")
+    coverage_db.export_to_xml(os.getenv("COCOTB_COVEREGE_RESULTS_FILE_NAME", "results_coverage.xml"))
     
