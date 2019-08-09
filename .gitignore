@@ -92,3 +92,6 @@ ENV/
 *~
 ~.pyc
 tb/results.xml
+
+sim_build
+

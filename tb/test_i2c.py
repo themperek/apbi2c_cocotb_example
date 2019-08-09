@@ -46,6 +46,7 @@ from apb import *
 from checkpoint import *
 from coverage import *
 from i2c import *
+import mp_tests
 
 #enable detailed logging of APB and I2C transactions
 LOG_XACTION_ENABLE = True
@@ -61,8 +62,14 @@ CHECKPOINTS_TREE_STRUCTURE = True
 @cocotb.test()
 def test_tree(dut):
     """Testing APBI2C core"""
-    
+        
     log = cocotb.logging.getLogger("cocotb.test")
+    
+    kwargs = mp_tests.unpickle(filename=os.getenv("COCOTB_KWARGS_FILENAME"))
+    log.info("kwargs: %s" % str(kwargs))
+    #checkpoint = kwargs["checkpoint"]
+    #param1 = kwargs["param1"]
+    
     cocotb.fork(Clock(dut.PCLK, 1000).start())
 
     #instantiate the APB agent (monitor and driver) (see apb.py)
@@ -367,3 +374,6 @@ def test_tree(dut):
     coverage_db.report_coverage(log.info, bins=False)
     coverage_db.export_to_xml(os.getenv("COCOTB_COVEREGE_RESULTS_FILE_NAME", "results_coverage.xml"))
     
+    log.info("Saving reults to %s", os.getenv("COCOTB_RESULTS_FILENAME"))
+    mp_tests.pickle(filename=os.getenv("COCOTB_RESULTS_FILENAME"), ret1=5, checkpoint=checkpoints["0"])
+   
