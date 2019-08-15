@@ -51,13 +51,11 @@ def checkpoint(entity, path=""):
             break
 
         sim_type = simulator.get_type(ii)
-        sim_name = simulator.get_name_string(ii)
+        sim_name = simulator.get_name_string(ii).split(".")[-1]  # this seems to be some bug
 
         hdl = SimHandle(ii, entity._path + "." + sim_name)
 
-        
         if sim_type is simulator.REG:
-
             if path:
                 reg_path = path + "." + sim_name
             else:
@@ -67,9 +65,10 @@ def checkpoint(entity, path=""):
 
         elif (sim_type == simulator.MODULE) or (sim_type == simulator.NETARRAY) or (sim_type == simulator.GENARRAY):
             in_path = path
+
             if sim_type == simulator.MODULE:
                 if in_path:
-                    in_path = "." + sim_name
+                    in_path = path + "." + sim_name
                 else:
                     in_path = sim_name
 
@@ -80,6 +79,4 @@ def checkpoint(entity, path=""):
 
 def restore(dut, checkpoint_data):
     for reg in checkpoint_data:
-        print("REG:", reg)
         dut.__setattr__(reg, checkpoint_data[reg])
-        # reg.setimmediatevalue(checkpoint_data[reg])

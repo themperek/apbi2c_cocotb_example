@@ -68,11 +68,8 @@ def test_tree(dut):
     kwargs = mp_tests.unpickle(filename=os.getenv("COCOTB_KWARGS_FILENAME"))
     log.info("kwargs: %s" % str(kwargs))
     if kwargs["checkpoint"]:
-        log.info("Restoring checkpoint!")
+        log.info("Restoring checkpoint...")
         restore(dut, kwargs["checkpoint"])
-    
-    #checkpoint = kwargs["checkpoint"]
-    #param1 = kwargs["param1"]
     
     cocotb.fork(Clock(dut.PCLK, 1000).start())
 
@@ -282,7 +279,7 @@ def test_tree(dut):
     dut.PRESETn <= 0
     yield Timer(2000)
     dut.PRESETn <= 1
-    
+
     yield config_write(12, 0x0100)
 
     #if checkpoints used, store them in the map, (see checkpoint.py)
@@ -293,10 +290,7 @@ def test_tree(dut):
         checkpoints['0'] = (checkpoint(dut), None)
         
    
-    
-    #print("BBB", dut.DUT_FIFO_RX.mem[0])
-    
-    #restore(dut, checkpoints['0'][0])
+
      
     
     #list of already covered operations, used to constraint the randomization
@@ -313,7 +307,7 @@ def test_tree(dut):
     #we define test end condition as reaching 90% coverage at the 
     #top cover item
     cov_op = 0
-    while cov_op < 90:
+    while cov_op < 10:
         
         #restore randomly selected checkpoint
         if ENABLE_CHECKPOINTS:
@@ -323,7 +317,6 @@ def test_tree(dut):
                 chkp_to_restore = '0'
 
             log.info("Restoring a simulation checkpoint at %s ns" % chkp_to_restore)
-            print(checkpoints)
             current_chceckpoint = checkpoints[chkp_to_restore]
             restore(dut, current_chceckpoint[0])
     

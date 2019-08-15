@@ -13,40 +13,39 @@ sim_args = {
 if __name__ == "__main__":
 
     # Run once so all is compiled once (TO be fixed in cocotb-test) ONLY NEEDED 1st time
-    #try:
+    # try:
     #    run_cocotb(**sim_args)  # will fail but will compile
-    #except:
+    # except:
     #    pass
 
-
     t1 = MpTest(sim_args, testcase="test_tree", seed=1, checkpoint=None, pram1=1, param2=3)
-    #t2 = MpTest(sim_args, testcase="test_tree", seed=2, checkpoint=None, pram1=1, param2=3)
-    #t3 = MpTest(sim_args, testcase="test_tree", seed=3, checkpoint=None, pram1=1, param2=3)
-    #t4 = MpTest(sim_args, testcase="test_tree", seed=4, checkpoint=None, pram1=1, param2=3)
+    t2 = MpTest(sim_args, testcase="test_tree", seed=2, checkpoint=None, pram1=1, param2=3)
+    t3 = MpTest(sim_args, testcase="test_tree", seed=3, checkpoint=None, pram1=1, param2=3)
+    t4 = MpTest(sim_args, testcase="test_tree", seed=4, checkpoint=None, pram1=1, param2=3)
 
-    mp_run([t1])#, t2, t3, t4])
-    
+    mp_run([t1, t2, t3, t4])
 
-    
     print(t1.coverage_result_file, t1.result_file)
     print("#\nt1.checkpoint\n#\n", t1.checkpoint)
     # print(t1.results)
 
-    print(t1.ret1)  
-    # or 
-    print(t1.results["ret1"])
-    
-    
-    t1_1 = MpTest(sim_args, testcase="test_tree", seed=1, checkpoint=t1.checkpoint, pram1=1, param2=3)
-    mp_run([t1_1])#
-    print("#\nt1_1.checkpoint\n#\n", t1_1.checkpoint)
-    
+    print("ret1:", t1.ret1)
+    # or
+    print("ret1:", t1.results["ret1"])
 
-    exit()
-    
+    t1_1 = MpTest(sim_args, testcase="test_tree", seed=1, checkpoint=t1.checkpoint, pram1=1, param2=3)
+    mp_run([t1_1])  #
+    print("#\nt1_1.checkpoint\n#\n", t1_1.checkpoint)
+
+    # exit()
+
+    t1_1_1 = MpTest(sim_args, testcase="test_tree", seed=1, checkpoint=t1_1.checkpoint, pram1=1, param2=3)
+    mp_run([t1_1_1])  #
+    print("#\nt1_1_1.checkpoint\n#\n", t1_1_1.checkpoint)
+
     if t1.ret1 == 5:
         tests = []
-        for i in range(10):
+        for i in range(2):
             tests.append(MpTest(sim_args, testcase="test_tree", seed=i, checkpoint=t2.checkpoint))
 
         mp_run(tests)
