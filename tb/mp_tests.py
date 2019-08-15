@@ -36,7 +36,7 @@ def _run_test(sim_args, seed, testcase, kwargs):
     out_filename = fo.name
     fo.close()
 
-    fo = tempfile.NamedTemporaryFile()
+    fo = tempfile.NamedTemporaryFile(suffix="_coverege.xml")
     coverege_results_file_name = fo.name
     fo.close()
 

@@ -67,6 +67,10 @@ def test_tree(dut):
     
     kwargs = mp_tests.unpickle(filename=os.getenv("COCOTB_KWARGS_FILENAME"))
     log.info("kwargs: %s" % str(kwargs))
+    if kwargs["checkpoint"]:
+        log.info("Restoring checkpoint!")
+        restore(dut, kwargs["checkpoint"])
+    
     #checkpoint = kwargs["checkpoint"]
     #param1 = kwargs["param1"]
     
@@ -128,16 +132,16 @@ def test_tree(dut):
             self.direction = direction
             self.repeat = repeat
             self.divider = divider
-            self.repeat_range = (1,3)
-            self.divider_range = (1,3)
+            self.repeat_range = [1,3]
+            self.divider_range = [1,3]
             
             #I2C_Operation objects may be fully randomized
             self.add_rand("direction",["write", "read"])
             self.add_rand("repeat_range",
-              [(1,3), (4,7), (8,11), (12,15), (16,23), (24,31)]
+              [[1,3], [4,7], [8,11], [12,15], [16,23], [24,31]]
             )
             self.add_rand("divider_range",
-              [(1,3), (4,7), (8,11), (12,15), (16,23), (24,31)]
+              [[1,3], [4,7], [8,11], [12,15], [16,23], [24,31]]
             )
         
         #post_randomize to pick random values from already randomized ranges
@@ -284,9 +288,16 @@ def test_tree(dut):
     #if checkpoints used, store them in the map, (see checkpoint.py)
     if ENABLE_CHECKPOINTS:
         checkpoints = {}
-        get_checkpoint_hier(dut)
+        #get_checkpoint_hier(dut)
         #the fist checkpoint is just after reset
-        checkpoints['0'] = (checkpoint(), None)
+        checkpoints['0'] = (checkpoint(dut), None)
+        
+   
+    
+    #print("BBB", dut.DUT_FIFO_RX.mem[0])
+    
+    #restore(dut, checkpoints['0'][0])
+     
     
     #list of already covered operations, used to constraint the randomization
     already_covered = []
@@ -311,10 +322,10 @@ def test_tree(dut):
             else:
                 chkp_to_restore = '0'
 
-            log.info("Restoring a simulation checkpoint at %s ns" % 
-                chkp_to_restore)
+            log.info("Restoring a simulation checkpoint at %s ns" % chkp_to_restore)
+            print(checkpoints)
             current_chceckpoint = checkpoints[chkp_to_restore]
-            restore(current_chceckpoint[0])
+            restore(dut, current_chceckpoint[0])
     
         #create I2C operation object to be executed
         i2c_op = I2C_Operation()
@@ -342,7 +353,7 @@ def test_tree(dut):
             if operations_completed[-1][1]: 
                 chkp_name = str(get_sim_time('ns'))
                 log.info("Creating a simulation checkpoint: " + chkp_name)
-                checkpoints[chkp_name] = (checkpoint(), i2c_op)
+                checkpoints[chkp_name] = (checkpoint(dut), i2c_op)
                 
         #call APB test sequence as long as cover item apb.writeXdelay 
         #coverage level is below 100%
@@ -369,11 +380,11 @@ def test_tree(dut):
             log.info("   %s of %d words with divider %d" % 
               (elem[0].direction, elem[0].repeat, elem[0].divider)
             )
-            
+    
     log.info("Functional coverage details:")
     coverage_db.report_coverage(log.info, bins=False)
     coverage_db.export_to_xml(os.getenv("COCOTB_COVEREGE_RESULTS_FILE_NAME", "results_coverage.xml"))
     
     log.info("Saving reults to %s", os.getenv("COCOTB_RESULTS_FILENAME"))
-    mp_tests.pickle(filename=os.getenv("COCOTB_RESULTS_FILENAME"), ret1=5, checkpoint=checkpoints["0"])
+    mp_tests.pickle(filename=os.getenv("COCOTB_RESULTS_FILENAME"), ret1=5, checkpoint=checkpoint(dut))
    
