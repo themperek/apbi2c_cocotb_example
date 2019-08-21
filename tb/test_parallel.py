@@ -13,10 +13,10 @@ sim_args = {
 if __name__ == "__main__":
 
     # Run once so all is compiled once (TO be fixed in cocotb-test) ONLY NEEDED 1st time
-    # try:
-    #    run_cocotb(**sim_args)  # will fail but will compile
-    # except:
-    #    pass
+    try:
+        run_cocotb(**sim_args)  # will fail but will compile
+    except:
+        pass
 
     t1 = MpTest(sim_args, testcase="test_tree", seed=1, checkpoint=None, pram1=1, param2=3)
     t2 = MpTest(sim_args, testcase="test_tree", seed=2, checkpoint=None, pram1=1, param2=3)
